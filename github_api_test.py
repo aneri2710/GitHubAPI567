@@ -5,7 +5,7 @@ Test case for the github get repository name and number of commits.
 """
 
 import unittest
-from GitHubAPI_567.github_api import github_user_info
+from github_api import github_user_info
 
 
 class TestGitHubAPI(unittest.TestCase):
