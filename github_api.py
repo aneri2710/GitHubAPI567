@@ -9,10 +9,12 @@ import requests
 import json
 
 
+
 def github_user_info(userID):
     # check if the user id is invalid
     if userID is None:
         return "Input is invalid"
+
     # check if the user is is not a string
     if not isinstance(userID, str):
         raise ValueError(f"{userID} is not a string.")
@@ -26,15 +28,18 @@ def github_user_info(userID):
         repository_name = value["name"]
         commits = f"https://api.github.com/repos/{userID}/{repository_name}/commits"
         get_commits = requests.get(commits)
-        commits_json = get_commits.json()
-        count = 0
-        # check if the number of commits are 0
-        if commits_json == 0:
-            print("no commits")
+        if get_commits.status_code != 404:
+            raise ValueError(f"{commits} could not be reached.")
+        else:
+            commits_json = get_commits.json()
+            count = 0
+            # check if the number of commits are 0
+            if commits_json == 0:
+                print("no commits")
 
-        for c in commits_json:
-            count += 1
-        yield f"Repo: {repository_name}, Number of commits: {count}"
+            for c in commits_json:
+                count += 1
+            yield f"Repo: {repository_name}, Number of commits: {count}"
 
 
 def main():
