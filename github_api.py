@@ -23,7 +23,7 @@ def github_user_info(userID):
     repos_json = get_repos.json()
 
     for value in repos_json:
-        repository_name = value.get("name")
+        repository_name = value["name"]
         commits = "https://api.github.com/repos/" + userID + "/" + repository_name + "/commits"
         get_commits = requests.get(commits)
         commits_json = get_commits.json()
