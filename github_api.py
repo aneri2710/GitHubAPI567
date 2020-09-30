@@ -17,14 +17,14 @@ def github_user_info(userID):
     if not isinstance(userID, str):
         raise ValueError(f"{userID} is not a string.")
 
-    user_repo = "https://api.github.com/users/" + userID + "/repos"
+    user_repo = f"https://api.github.com/users/{userID}/repos"
 
     get_repos = requests.get(user_repo)
     repos_json = get_repos.json()
 
     for value in repos_json:
         repository_name = value["name"]
-        commits = "https://api.github.com/repos/" + userID + "/" + repository_name + "/commits"
+        commits = f"https://api.github.com/repos/{userID}/{repository_name}/commits"
         get_commits = requests.get(commits)
         commits_json = get_commits.json()
         count = 0
