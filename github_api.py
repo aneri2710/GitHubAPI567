@@ -13,7 +13,9 @@ import json
 def github_user_info(userID):
     # check if the user id is invalid
     if userID is None:
-        return "Input is invalid"
+        raise ValueError(f"Input is invalid")
+
+    
 
     # check if the user is is not a string
     if not isinstance(userID, str):
@@ -22,15 +24,17 @@ def github_user_info(userID):
     user_repo = f"https://api.github.com/users/{userID}/repos"
 
     get_repos = requests.get(user_repo)
-    repos_json = get_repos.json()
+    if get_repos.status_code != 200:
+        raise ValueError(f"{get_repos} could not be reached.")
+    else:
+        repos_json = get_repos.json()
+        repo_list = []
 
-    for value in repos_json:
-        repository_name = value["name"]
-        commits = f"https://api.github.com/repos/{userID}/{repository_name}/commits"
-        get_commits = requests.get(commits)
-        if get_commits.status_code != 404:
-            raise ValueError(f"{commits} could not be reached.")
-        else:
+        for value in repos_json:
+            repository_name = value["name"]
+            commits = f"https://api.github.com/repos/{userID}/{repository_name}/commits"
+            get_commits = requests.get(commits)
+
             commits_json = get_commits.json()
             count = 0
             # check if the number of commits are 0
@@ -39,11 +43,13 @@ def github_user_info(userID):
 
             for c in commits_json:
                 count += 1
-            yield f"Repo: {repository_name}, Number of commits: {count}"
+            repo_list.append(f"Repo: {repository_name} Number of commits: {count}")
+            print(f"Repo: {repository_name} Number of commits: {count}")
+        return repo_list
 
 
 def main():
     # get the user id
     userID = input("Enter your user ID: ")
-    for i in github_user_info(userID):
-        return i
+    github_user_info(userID)
+
